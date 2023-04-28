@@ -2,20 +2,20 @@ const Post = require("../models/post");
 const asyncHandler = require('express-async-handler');
 const { body, validationResult } = require("express-validator");
 
-exports.all_posts_get = (req, res) => {
-  Post.find({})
-    .exec((err, posts) => {
-      if (err) return res.json(err);
-      return res.json(posts);
-    });
-}
+exports.all_posts_get = asyncHandler(async(req, res) => {
+  const posts = await Post.find({}).exec();
+  if (posts === null) {
 
-exports.post_create = [
+  };
+  return res.json(posts);
+});
+
+exports.post_create_post = [
   body("title")
     .trim()
     .notEmpty()
     .withMessage("Please enter a title"),
-  body("blog_text")
+  body("post_text")
     .trim()
     .notEmpty()
     .withMessage("Please enter a title"),
@@ -25,32 +25,54 @@ exports.post_create = [
 
     const post = new Post({
       title: req.body.title,
-      blog_text: req.body.blog_text,
+      post_text: req.body.post_text,
       timestamp: new Date(),
-      author: res.locals.currentUser,
+      author: req.user,
       isPrivate: req.body.isPrivate
     })
 
     if (!errors.isEmpty()) {
       return res.json({errors: errors.array()});
     } else {
+      await post.save();
       return res.json(post);
     }
   })
 ]
 
-exports.post_get = (req, res) => {
-  Post.findById(req.params.id)
-    .exec((err, post) => {
-      if (err) return res.json(err);
-      return res.json(post);
-    });
-}
+exports.post_get = asyncHandler(async(req, res) => {
+  const post = await Post.findById(req.params.postId).exec();
+  return res.json(post);
+});
 
-exports.post_update = asyncHandler(async(req, res, next) => {
-  res.json();
-})
+exports.post_update = [
+  body("title")
+    .trim()
+    .notEmpty()
+    .withMessage("Please enter a title"),
+  body("post_text")
+    .trim()
+    .notEmpty()
+    .withMessage("Please enter a title"),
+    
+  asyncHandler(async(req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.json({errors: errors.array()});
+    } else {
+      await Post.findByIdAndUpdate(req.params.postId, {
+        title: req.body.title,
+        post_text: req.body.post_text,
+        timestamp: new Date(),
+        isPrivate: req.body.isPrivate,
+      });
+      const newPost = await Post.findById(req.params.postId);
+      return res.json(newPost);
+    }
+  })
+];
 
 exports.post_delete = asyncHandler(async(req, res, next) => {
-  res.json();
+  await Post.findByIdAndRemove(req.params.postId);
+  res.json("product deleted");
 })

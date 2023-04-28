@@ -1,12 +1,12 @@
 var express = require('express');
-var router = express.Router();
+var router = express.Router({ mergeParams: true });
 const commentController = require("../controllers/commentController");
 
 //GET all comments of post
 router.get('/', commentController.comments_get);
 
 //POST create comment
-router.get('/create', commentController.comment_create);
+router.post('/create', commentController.comment_create_post);
 
 //PUT update comment
 router.put('/:commentId', commentController.comment_update);

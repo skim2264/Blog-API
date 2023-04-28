@@ -30,14 +30,12 @@ passport.use(new JWTStrategy({
     secretOrKey : 'your_jwt_secret'
   },
   async (jwtPayload, cb) => {
-    //find the user in db if needed. This functionality may be omitted if you store everything you'll need in JWT payload.
     try {
-      const user = await User.findById(jwtPayload.id);
+      const user = await User.findById(jwtPayload._id);
       return cb(null, user);
     } catch (err) {
-      return cb({err}, jwtPayload, "ARGH");
+      return cb(err);
     }
-}
-));
+}));
 
 module.exports = passport;
