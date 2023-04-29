@@ -9,6 +9,7 @@ require('dotenv').config();
 const usersRouter = require('./routes/users');
 const postsRouter = require('./routes/posts');
 const commentsRouter = require('./routes/comments');
+const cors = require('cors');
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(cors());
 
 //route functions
 app.use('/api/users', usersRouter);

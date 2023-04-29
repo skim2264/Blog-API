@@ -5,7 +5,7 @@ const { body, validationResult } = require("express-validator");
 exports.all_posts_get = asyncHandler(async(req, res) => {
   const posts = await Post.find({}).exec();
   if (posts === null) {
-
+    return res.json("no posts");
   };
   return res.json(posts);
 });
