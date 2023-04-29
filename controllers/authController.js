@@ -16,7 +16,7 @@ exports.login_post = asyncHandler(async(req, res, next) => {
     }
 
     if (!user) {
-      return res.send(info.message);
+      return res.send(info);
     }
 
     req.login(user, {session: false}, (err) => {
