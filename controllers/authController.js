@@ -71,3 +71,8 @@ exports.signup_post = [
     })
   })
 ];
+
+//get all users info
+exports.users_get = asyncHandler(async(req, res, next) => {
+  
+})

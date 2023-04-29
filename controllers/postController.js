@@ -3,7 +3,7 @@ const asyncHandler = require('express-async-handler');
 const { body, validationResult } = require("express-validator");
 
 exports.all_posts_get = asyncHandler(async(req, res) => {
-  const posts = await Post.find({}).exec();
+  const posts = await Post.find({}).sort({timestamp:-1}).populate("author").exec();
   if (posts === null) {
     return res.json("no posts");
   };
@@ -41,7 +41,7 @@ exports.post_create_post = [
 ]
 
 exports.post_get = asyncHandler(async(req, res) => {
-  const post = await Post.findById(req.params.postId).exec();
+  const post = await Post.findById(req.params.postId).populate("author").populate({path:"comments", populate: {path:"author"}}).exec();
   return res.json(post);
 });
 
@@ -66,7 +66,7 @@ exports.post_update = [
         timestamp: new Date(),
         isPrivate: req.body.isPrivate,
       });
-      const newPost = await Post.findById(req.params.postId);
+      const newPost = await Post.findById(req.params.postId).populate("author").populate("comments").exec();
       return res.json(newPost);
     }
   })
@@ -74,5 +74,5 @@ exports.post_update = [
 
 exports.post_delete = asyncHandler(async(req, res, next) => {
   await Post.findByIdAndRemove(req.params.postId);
-  res.json("product deleted");
+  res.json("Post deleted.");
 })
