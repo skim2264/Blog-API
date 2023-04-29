@@ -8,11 +8,15 @@ const passport = require("passport");
 //login
 exports.login_post = asyncHandler(async(req, res, next) => {
   passport.authenticate('local', {session: false}, (err, user, info) => {
-    if (err || !user) {
+    if (err) {
         return res.status(400).json({
             message: 'Something is not right',
             user : user
         });
+    }
+
+    if (!user) {
+      return res.send(info.message);
     }
 
     req.login(user, {session: false}, (err) => {
