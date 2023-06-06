@@ -18,7 +18,7 @@ exports.post_create_post = [
   body("post_text")
     .trim()
     .notEmpty()
-    .withMessage("Please enter a title"),
+    .withMessage("Please enter body text for the post"),
   body("image")
     .trim(),
 
