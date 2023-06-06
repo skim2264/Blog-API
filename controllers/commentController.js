@@ -4,7 +4,7 @@ const asyncHandler = require('express-async-handler');
 const { body, validationResult } = require("express-validator");
 
 exports.comments_get = asyncHandler(async(req, res) => {
-  const post = await Post.findById(req.params.postId).populate("comments").populate({path:"comments", populate: {path:"author"}}).exec();
+  const post = await Post.findById(req.params.postId).populate("comments").populate({path:"comments", populate: {path:"author"}, sort:{createdAt: -1}}).exec();
   const comments = post.comments;
   if (comments === null) {
     return res.json("no comments");
@@ -24,8 +24,7 @@ exports.comment_create_post = [
 
     const comment = new Comment({
       text: req.body.text,
-      author: req.user,
-      timestamp: new Date()
+      author: req.user
     });
 
     if (!errors.isEmpty()) {
@@ -51,8 +50,7 @@ exports.comment_update = [
       return res.json({errors: errors.array()});
     } else {
       await Comment.findByIdAndUpdate(req.params.commentId, {
-        text: req.body.text,
-        timestamp: new Date()
+        text: req.body.text
       });
       const newComment = await Comment.findById(req.params.commentId).populate("author").exec();
       return res.json(newComment);
