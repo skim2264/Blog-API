@@ -62,6 +62,8 @@ exports.post_update = [
       await Post.findByIdAndUpdate(req.params.postId, {
         title: req.body.title,
         post_text: req.body.post_text,
+        author: req.user,
+        comments: req.body.comments,
         isPrivate: req.body.isPrivate,
       });
       const newPost = await Post.findById(req.params.postId).populate("author").populate("comments").exec();
