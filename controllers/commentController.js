@@ -24,7 +24,8 @@ exports.comment_create_post = [
 
     const comment = new Comment({
       text: req.body.text,
-      author: req.user
+      author: req.user,
+      post: req.params.postId
     });
 
     if (!errors.isEmpty()) {
