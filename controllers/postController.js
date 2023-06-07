@@ -1,11 +1,9 @@
 const Post = require("../models/post");
 const asyncHandler = require('express-async-handler');
 const { body, validationResult } = require("express-validator");
-const fs = require("fs");
-const path = require("path");
 
 exports.all_posts_get = asyncHandler(async(req, res) => {
-  const posts = await Post.find({isPrivate:"false"}).sort({createdAt:-1}).populate("author").exec();
+  const posts = await Post.find().sort({createdAt:-1}).populate("author").exec();
   if (posts === null) {
     return res.json("no posts");
   };
