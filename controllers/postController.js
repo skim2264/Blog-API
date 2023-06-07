@@ -1,6 +1,8 @@
 const Post = require("../models/post");
 const asyncHandler = require('express-async-handler');
 const { body, validationResult } = require("express-validator");
+const fs = require("fs");
+const path = require("path");
 
 exports.all_posts_get = asyncHandler(async(req, res) => {
   const posts = await Post.find({isPrivate:"false"}).sort({createdAt:-1}).populate("author").exec();
@@ -19,15 +21,12 @@ exports.post_create_post = [
     .trim()
     .notEmpty()
     .withMessage("Please enter body text for the post"),
-  body("image")
-    .trim(),
 
   asyncHandler(async(req, res, next) => {
     const errors = validationResult(req);
     const post = new Post({
       title: req.body.title,
       post_text: req.body.post_text,
-      image: req.body.image,
       author: req.user,
       isPrivate: req.body.isPrivate
     })
@@ -55,8 +54,6 @@ exports.post_update = [
     .trim()
     .notEmpty()
     .withMessage("Please enter a title"),
-  body("image")
-    .trim(),
     
   asyncHandler(async(req, res, next) => {
     const errors = validationResult(req);
@@ -66,7 +63,6 @@ exports.post_update = [
       await Post.findByIdAndUpdate(req.params.postId, {
         title: req.body.title,
         post_text: req.body.post_text,
-        image: req.body.image,
         isPrivate: req.body.isPrivate,
       });
       const newPost = await Post.findById(req.params.postId).populate("author").populate("comments").exec();
