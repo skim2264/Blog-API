@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+const upload = require('multer')();
 
 const postController = require("../controllers/postController");
 
@@ -7,7 +8,7 @@ const postController = require("../controllers/postController");
 router.get('/', postController.all_posts_get);
 
 //POST create post
-router.post('/create', postController.post_create_post);
+router.post('/create', upload.any(), postController.post_create_post);
 
 //GET single post 
 router.get('/:postId', postController.post_get);
